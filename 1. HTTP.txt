@@ -1,0 +1,235 @@
+http protocol is default one in browser then it is hidden.
+
+http://www.shivam.com -> www.shivam.com
+
+
+
+status code are signals that are send to server to browser.
+
+Response Body :- It is actual content given by server to browser.
+
+statusCode -> 304 -> file fetched from cache
+
+
+in our code "Hello World!" is our Response body.
+app.MapGet("/",()=>"Hello World!");
+
+MapGet -> You Cannot write any code you can only return a value.
+
+app.Run(); // For Running Your Code Preffered way for executing some piece of code.
+
+
+so in this run method you will be passing only one argument and that will be your lambda expression of course you can also pass a method if you want. 
+so this particular lambda expression will be executed upon receiving the request and this lambda expression should receive only one argument that is context which is of type http context so the http context is a type of object that gets created automatically upon receiving the request so when the browser sends a request to the cast rail and the kestrel forwards the same request to the application code to the asp.net core application then asp.net core automatically creates an object of type http context and this context contains the information related to your request response .
+ 
+
+app.Run(async (HttpContext context)=>{
+    // We can also send status code to server
+    content.Response.StatusCode = 200;
+
+    // In order to send actual response body
+    await context.Response.WriteAsync("Hello");
+
+    // here await means subsequent code must be wait for this line of code is to be completed. and if you use await in your code then you have to use async.
+
+});
+
+
+
+
+
+
+
+HTTP Response Headers
+---------------------
+
+
+http response headers are the key value pairs that are sent by the server to the client generally it includes the information about the response itself indicating the type of the response and how it should be stored and managed
+in the client.
+
+
+generally these response headers are not visible to the end user.
+
+for Getting Response Headers.
+
+app.Run(async (HttpContext context)=>{
+    
+    context.Response.Headers["MyKey]="my value";
+
+    // It just change the text
+    context.Response.Headers["Server]="my Server";
+
+
+    // Then it sends response as HTML
+    context.Response.Headers["Content-Type"]="text/html";
+
+    await context.Response.WriteAsync("<h1>Hello</h1>");
+
+
+});
+
+Then we get {MyKey:my value} in Response Headers in Developer Network Tab.
+Response Headers sends from server to browser.
+
+
+
+
+
+
+
+HTTP Request 
+------------
+
+HTTP request is a message that is sent from browser to server. IT is used for asking for something.here browser is client that is requesting from server.
+
+GET -> Request body will not be there
+POST -> Contain Request Body
+
+app.Run(async (HttpContext context)=>{
+    
+    // This path properties gives you requested url
+    string path = context.Request.Path;
+
+    // can read Request Method also
+    string path-M = context.Request.Method;
+
+
+
+
+    context.Response.Headers["Content-type"]="text/html";
+    await context.Response.WriteAsync($"<p>{path}</p>");
+    await context.Response.WriteAsync($"<p>{path-M}</p>");
+
+
+});
+
+
+
+
+
+
+
+Query String
+------------
+
+it is a syntax where you can send the parameter value from browser to server along with the request.
+
+/dashboard?id=1
+
+after ? queryString will be start left of ? is url parameter and right side of ? queryString.
+
+localhost:3543?id=1&name=scott here & is separator between two pairs of information.
+
+app.Run(async (HttpContext context)=>{
+    context.Response.Headers["Content-type"]="text/html";
+    if(context.Request.Method = "GET")
+    {
+        // Query returns information as key:value pair
+        if(context.Request.Query.ContainsKey("id"))
+        {
+            string id = context.Request.Query["id"];await context.Response.WriteAsync($"<p>{id}</p>");
+        }
+    }
+});
+
+queryString and Routing are two different ways to get values from browser to server.
+
+
+
+
+
+
+
+
+HTTP Request Headers
+--------------------
+
+Request Headers are key value pair that are sent from browser to server.
+
+These Request Headers are information to server.
+Request Headers is a way how browser talks to server.
+
+RE sometimes contains information about cookies.
+Content-Type , Content-Length -> Required in POST request in general
+User-Agent :- Contains info about current browser and current operating system.
+
+
+
+Postman
+-------
+
+app.Run(async (HttpContext context)=>{
+    context.Response.Headers["Content-type"]="text/html";
+    if(context.Request.Method = "GET")
+    {
+        // Query returns information as key:value pair
+        if(context.Request.Headers.ContainsKey("AuthorizationKey"))
+        {
+            string auth = context.Request.Headers["AuthorizationKey"];
+            await context.Response.WriteAsync($"<p>{auth}</p>");
+        }
+    }
+});
+
+
+HTTP Get vs Post Part-1
+-----------------------
+
+
+HTTP Request Methods
+
+GET :- Requests to retrieve information (page, entity object or a static file).
+
+
+
+Post :- Sends an entity object to server; generally, it will be inserted into the database.
+
+Put :- Sends an entity object to server; generally updates all properties (full-update) it in the database.
+
+
+
+Patch :- Sends an entity object to server; generally updates few properties (partial-update) it in the database.
+
+
+
+Delete :- Requests to delete an entity in the database.     
+
+
+HTTP Get vs Post Part-2
+-----------------------
+
+
+app.Run(async (HttpContext context)=>{
+    System.IO.StreamReader reader = new StreamReader(context.Request.body);
+
+
+    string body = await reader.readToEndAsync();
+
+    // if we have normal string as input
+    if(body="Hello"){
+
+    }
+
+    // if we have query string as input
+    // firstName=scott&age=20
+    // then we convert queryString from string to dictionary.
+
+    // Here StringValues means it can support multiple values also like age=20 and age=30
+
+
+    Dictionary<string,StringValues> queryDict = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(body);
+
+    if(queryDict.ContainsKey("firstName")){
+
+        // For getting first value from stringValues like if there is two values of age
+        string firstName = queryDict["firstName"][0];
+        await context.Response.WriteAsync(firstName);
+    }
+});
+
+
+
+
+
+
+

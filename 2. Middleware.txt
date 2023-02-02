@@ -1,0 +1,258 @@
+set of methods that executes one after another Whenever you received the request in this case those function or methods are called middleware.
+
+Middleware1->Middleware2->Middleware3
+
+Each middleware performs a single operation that means we are try to implement single responsibility principle.
+
+For eg:
+Middleware1 -> implements the https redirection
+Middleware2 -> second middleware enables static files redirection
+Middleware2 -> then the third one enables the 
+authentication 
+Middleware4 -> 
+the fourth one enables authorization
+
+like this each middleware performs an individual single operation.in this way it is easy to understand the purpose of each middleware.
+
+
+for example in case if you don't want a 
+single particular operation you can 
+remove that particular middleware without affecting the functionality of other middleware
+that is the underlying goal of 
+middleware .
+
+
+and moreover there is no rule that each middleware has to forward the request to the next subsequent middleware for example the middleware 2 don't want to send the request to the subsequent middleware so it may not so such middleware is called as terminal 
+middleware or short circuiting middleware.
+
+
+
+Project Name-> MiddlewareExample 
+--------------------------------
+
+// Create middleware
+// one of the method for creating middleware is run method
+
+// context here it is an object that contains req res properties for process the data
+
+app.Run(async (HttpContext context)=>{
+    await context.Response.WriteAsync("Hello");
+});
+
+can we create multiple app.Run() Method.
+
+app.Run(async (HttpContext context)=>{
+    await context.Response.WriteAsync("Hello");
+});
+
+
+app.Run(async (HttpContext context)=>{
+    await context.Response.WriteAsync("Hello");
+});
+
+app.Run(async (HttpContext context)=>{
+    await context.Response.WriteAsync("Hello");
+});
+
+We can write multiple middleware but after running one method it does'nt forward request to subsequent middleware.
+A middleware should be able to forward the request to further subsequent middleware.
+but it doest not happen with app.Run() method. 
+
+
+
+Middleware Chain
+----------------
+
+Middlewares are chained one-after-other and execute in the same sequence how they're added.
+
+Middleware1->Middleware2->Middleware3
+
+app.Use(); -> It can forward request to subsequent middleware.
+
+// Here second parameter represent subsequent Middleware
+
+// Middleware1
+app.Use(async (HttpContext context,RequestDelegate next)=>{
+    await context.Response.WriteAsync("Hello");
+    await next(context);
+});
+
+// Middleware2
+app.Use(async (HttpContext context,RequestDelegate next)=>{
+    await context.Response.WriteAsync("Hello");
+    await next(context);
+
+});
+
+
+// Middleware3
+// Here it is terminating middleware 
+app.Run(async (HttpContext context)=>{
+    await context.Response.WriteAsync("Hello");
+
+});
+ 
+
+
+Custom Middleware Class 
+-----------------------
+
+
+suppose your middleware has to execute some large amount of code so it has larger responsibility in that case it would doesn't make sense to write all of that code inside the same file that is in the program.cs file itself so then it would be better to separate the same as a separate class and keeping it in a separate file and that is exactly called as custom middleware class.
+
+Middleware class is used to separate the middleware logic from a lambda expression to a separate / reusable class.
+
+class MiddlewareClassName : IMiddleware
+{
+  public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+  {
+    //before logic
+    await next(context);
+    //after logic
+  }
+}
+app.UseMiddleware<MiddlewareClassName>();
+
+if you want to register a lambda expression as custom middleware then you have to use app.Use().
+
+If you want to Register Middleware class that is custom middleware class then you have to use 
+
+app.UseMiddleware<MyCustomMiddleware>();
+
+order is important how you add them.
+
+
+
+
+Custom Middleware Extensions
+----------------------------
+ 
+
+
+class MiddlewareClassName : IMiddleware
+{
+  public async Task InvokeAsync(HttpContext context,RequestDelegate next)
+  {
+    //before logic
+    await next(context);
+    //after logic
+  }
+});
+
+
+Middleware extension method is used to invoke the middleware with a single method call.in extension method  is a method that is getting injected into a object dynamically.
+
+app -> datatype -> WebApplication type
+
+and WebApplication class is the child of IApplicationBuilder then if we can inject extension method into this IApplicationBuilder eventually that gets added to WebApplication and also into over app object.
+
+static class ClassName
+{
+  public static IApplicationBuilder ExtensionMethodName(this IApplicationBuilder app)
+  {
+    return app.UseMiddleware<MiddlewareClassName>);
+  }
+}
+
+// Now We can call directly as an extension method.
+app.ExtensionMethodName();
+
+
+
+
+
+
+Custom Conventional Middleware Class
+------------------------------------
+
+we can create it directly by using visual studio itself.
+
+there is another possibility that you can create a custom middleware without inheriting from this IMiddleware interface.
+
+in Custom Conventional middleware you get next as constructor parameter.
+
+you can manipulate the cookies and you can do lots of things using middleware.
+
+class MiddlewareClassName
+{
+  private readonly RequestDelegate _next;
+
+  public MiddlewareClassName(RequestDelegate next)
+  {
+    _next = next;
+  }
+
+  public async Task InvokeAsync(HttpContext context)
+  {
+   //before logic
+   await _next(context);
+   //after logic
+  }
+});
+
+
+static class ClassName
+{
+  public static IApplicationBuilder ExtensionMethodName(this IApplicationBuilder app)
+  {
+   return app.UseMiddleware<MiddlewareClassName>);
+  }
+}
+app.ExtensionMethodName();
+
+
+
+
+
+
+Right Order of Middleware
+-------------------------
+
+app.UseExceptionHandler("/Error");
+app.UseHsts();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseSession();
+app.MapControllers();
+//add your custom middlewares
+app.Run();
+
+
+
+
+
+
+
+UseWhen
+-------
+both use and use when is used to attach the middleware to the application request pipeline but particularly the use when is used to execute a branch of middleware when a specific condition is true.
+
+
+app.UseWhen( )
+
+app.UseWhen(
+  context => { return boolean; },
+  app =>
+  {
+    //add your middlewares
+  }
+);
+The extension method called “UseWhen” is used to execute a branch of middleware only when the specified condition is true.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
