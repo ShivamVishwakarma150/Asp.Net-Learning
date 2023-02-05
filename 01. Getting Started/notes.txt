@@ -1,0 +1,22 @@
+Kestrel
+-------
+
+asp.net core applications require a server in order to receive the request and send the response kestrel is the default cross platform http server for asp.net core applications.
+
+
+it acts as both development server as well as real application server which is able to receive the request from real internet.
+
+in Production you will be using reverse proxy servers.
+ 
+
+
+with only kestrel the http request will be received from local network or internet the kestrel will receive that request and it will forward that request to application  code the kestrel will receive the request and fills the information in the form of an object and that object is called as http context so the kestrel prepares a http context object which contains the details of the request and sends that http context to the application code so that the application code can receive that context and can process based on that and can provide the response or result back to the kestrel then the kestrel sends the same response back to the internet or the client
+
+profiles:-
+in starting we have 2 profiles.
+a profile is a collection of settings which enables a particular server to run our application when you start your project.
+
+"commandName":"Project" -> kestrel
+"commandName":"IISExpress" -> IISExpress
+
+
