@@ -1,10 +1,10 @@
-http protocol is default one in browser then it is hidden.
+http protocol is default protocol in all the browser that is generally hidden.
 
 http://www.shivam.com -> www.shivam.com
 
+The entire Asp.net course or concept work based on HTTP protocol means using these concept of request/response.
 
-
-status code are signals that are send to server to browser.
+status code are signals that are send from server to browser.
 
 Response Body :- It is actual content given by server to browser.
 
@@ -16,7 +16,8 @@ app.MapGet("/",()=>"Hello World!");
 
 MapGet -> You Cannot write any code you can only return a value.
 
-app.Run(); // For Running Your Code Preffered way for executing some piece of code.
+app.Run(); // For Running Your Code Preferred way for executing some piece of code.
+
 
 
 so in this run method you will be passing only one argument and that will be your lambda expression of course you can also pass a method if you want. 
