@@ -160,6 +160,8 @@ User-Agent :- Contains info about current browser and current operating system.
 Postman
 -------
 
+Here you can send your custom Headers.
+
 app.Run(async (HttpContext context)=>{
     context.Response.Headers["Content-type"]="text/html";
     if(context.Request.Method = "GET")
@@ -182,24 +184,24 @@ HTTP Request Methods
 
 GET :- Requests to retrieve information (page, entity object or a static file).
 
-
-
 Post :- Sends an entity object to server; generally, it will be inserted into the database.
 
 Put :- Sends an entity object to server; generally updates all properties (full-update) it in the database.
 
-
-
 Patch :- Sends an entity object to server; generally updates few properties (partial-update) it in the database.
-
-
 
 Delete :- Requests to delete an entity in the database.     
 
 
 HTTP Get vs Post Part-2
 -----------------------
-
+you have a property called request.body by default this property represents the request body,but by default it is not in string format it is by default of which type so it is a stream just like file stream so just like how do you read the information from the file you can use the stream reader class in dot net to read the information from the request body.
+you can create:
+System.IO.StreamReader reader = new StreamReader(context.Request.body);
+it is not based on the file stream but it is based on our body stream that is why we are passing the same as a part of the constructor.
+after creating the reader you can use the method called readToEndAsync()   in order to asynchronously load that full request body for the async methods we have to prefix await keyword 
+that means the further lines of the code here will wait for the completion of the body reading so after successful completion of request body read we can store the request body in the form of a string.
+ 
 
 app.Run(async (HttpContext context)=>{
     System.IO.StreamReader reader = new StreamReader(context.Request.body);
@@ -207,18 +209,20 @@ app.Run(async (HttpContext context)=>{
 
     string body = await reader.readToEndAsync();
 
+    // using postman when we send "Hello" as request body as POST request then we clicks send in postman for actual request.
     // if we have normal string as input
     if(body="Hello"){
 
     }
 
     // if we have query string as input
-    // firstName=scott&age=20
+    // firstName=scott&age=20 -> it is still in string formate only
+    // conversion of queryString from string formate into Dictionary formate is called as parsing.
     // then we convert queryString from string to dictionary.
 
     // Here StringValues means it can support multiple values also like age=20 and age=30
 
-
+    // Here we do parsing 
     Dictionary<string,StringValues> queryDict = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(body);
 
     if(queryDict.ContainsKey("firstName")){
