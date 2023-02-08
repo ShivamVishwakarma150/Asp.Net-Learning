@@ -233,7 +233,8 @@ app.Run();
 
 UseWhen
 -------
-both use and use when is used to attach the middleware to the application request pipeline but particularly the use when is used to execute a branch of middleware when a specific condition is true.
+
+both use and useWhen is used to attach the middleware to the application request pipeline but particularly the useWhen is used to execute a branch of middleware when a specific condition is true.
 
 
 app.UseWhen( )
