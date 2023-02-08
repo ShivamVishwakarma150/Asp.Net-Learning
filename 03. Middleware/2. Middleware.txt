@@ -33,6 +33,9 @@ Project Name-> MiddlewareExample
 // Create middleware
 // one of the method for creating middleware is run method
 
+
+Run() method is also a middleware.
+
 // context here it is an object that contains req res properties for process the data
 
 app.Run(async (HttpContext context)=>{
@@ -45,11 +48,9 @@ app.Run(async (HttpContext context)=>{
     await context.Response.WriteAsync("Hello");
 });
 
-
 app.Run(async (HttpContext context)=>{
-    await context.Response.WriteAsync("Hello");
+    await context.Response.WriteAsync("Hello Again");
 });
-
 app.Run(async (HttpContext context)=>{
     await context.Response.WriteAsync("Hello");
 });
@@ -57,6 +58,7 @@ app.Run(async (HttpContext context)=>{
 We can write multiple middleware but after running one method it does'nt forward request to subsequent middleware.
 A middleware should be able to forward the request to further subsequent middleware.
 but it doest not happen with app.Run() method. 
+app.Run() doesn't forward request to subsequent middleware.
 
 
 
@@ -68,18 +70,24 @@ Middlewares are chained one-after-other and execute in the same sequence how the
 Middleware1->Middleware2->Middleware3
 
 app.Use(); -> It can forward request to subsequent middleware.
+It can also terminate the middleware chain.
+but in this case lambda expression should receive 2 parameters instead of one.
+HttpContext context -> Contains request,Response
+RequestDelegate next -> it represents the subsequent middlewares
 
 // Here second parameter represent subsequent Middleware
 
 // Middleware1
 app.Use(async (HttpContext context,RequestDelegate next)=>{
     await context.Response.WriteAsync("Hello");
+
+    // Calling next middleware
     await next(context);
 });
 
 // Middleware2
 app.Use(async (HttpContext context,RequestDelegate next)=>{
-    await context.Response.WriteAsync("Hello");
+    await context.Response.WriteAsync("Hello Again");
     await next(context);
 
 });
@@ -87,9 +95,9 @@ app.Use(async (HttpContext context,RequestDelegate next)=>{
 
 // Middleware3
 // Here it is terminating middleware 
+// So Here we can use app.Run() that is short circuiting middleware
 app.Run(async (HttpContext context)=>{
     await context.Response.WriteAsync("Hello");
-
 });
  
 
@@ -102,6 +110,14 @@ suppose your middleware has to execute some large amount of code so it has large
 
 Middleware class is used to separate the middleware logic from a lambda expression to a separate / reusable class.
 
+By default the middleware class has to implement an interface  called IMiddleware in order to register that class is a middleware.
+and this IMiddleware interface forces to write InvokeAsync method which will be executed then request reaches to particular middleware.
+Here also we get HttpContext and RequestDelegate as parameter.
+
+For activating our custom Middleware :
+        builder.Services.AddTransient<MyCustomMiddleware>(); 
+
+
 class MiddlewareClassName : IMiddleware
 {
   public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -111,12 +127,11 @@ class MiddlewareClassName : IMiddleware
     //after logic
   }
 }
-app.UseMiddleware<MiddlewareClassName>();
 
-if you want to register a lambda expression as custom middleware then you have to use app.Use().
+so if you want to register a lambda expression as a middleware you can simply use app.use() but if you want to register a middleware class that is custom middleware class we have to call UseMiddleware<>(); middleware in this case we have to specify
+the custom middleware class name as generic parameter that's all.
 
-If you want to Register Middleware class that is custom middleware class then you have to use 
-
+syntax:
 app.UseMiddleware<MyCustomMiddleware>();
 
 order is important how you add them.
@@ -126,24 +141,13 @@ order is important how you add them.
 
 Custom Middleware Extensions
 ----------------------------
- 
 
-
-class MiddlewareClassName : IMiddleware
-{
-  public async Task InvokeAsync(HttpContext context,RequestDelegate next)
-  {
-    //before logic
-    await next(context);
-    //after logic
-  }
-});
-
-
-Middleware extension method is used to invoke the middleware with a single method call.in extension method  is a method that is getting injected into a object dynamically.
+writing this useMiddleware<>() and then mentioning the class name is a bit lengthy code we can simplify the same by creating an extension method.
+Middleware extension method is used to invoke the middleware with a single method call. in extension method  is a method that is getting injected into a object dynamically.
 
 app -> datatype -> WebApplication type
-
+and this app object is created by build() method.
+and when we see build() method in detail then there also we can see that Build() return an object of WebApplication type that is our app object.
 and WebApplication class is the child of IApplicationBuilder then if we can inject extension method into this IApplicationBuilder eventually that gets added to WebApplication and also into over app object.
 
 static class ClassName
