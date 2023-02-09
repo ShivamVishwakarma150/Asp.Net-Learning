@@ -32,7 +32,19 @@ you can get the endpoint object only after use routing executes because before c
 probably the display name will be same as your url
 and request delegate will be the actual endpoint that should be executed.
 
+Route Parameters
+----------------
 
+/files/{filename}.{extension}
+
+
+
+
+Optional Parameter
+--------------------
+suppose your requirement is in case if the user doesn't supply the id value, in this case instead of assigning a default value into that parameter you would like to take it as null by default so in case of null we can check some condition and we can print some different message to the response.
+
+so the benefit of optional parameter is this that is you can check whether the value is supplied or not  if not supplied you can generate a different response in the real world projects also you can check some condition like this so if the value is not supplied that means if it is null value, you may not retrieve the data from database so that is the real world use case.
 
 
 
