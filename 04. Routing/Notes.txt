@@ -1,0 +1,44 @@
+so whenever you have an incoming request for a particular url you will match that particular incoming http url with the list of urls that you already have so whichever the url is matching the corresponding endpoint will be invoked here endpoint is the terminology but it is actually a middleware so invoking the corresponding endpoint based on the http method and url is called as routing.
+
+
+/home --> Middleware for HomePage Executed
+/Office ---> Middleware for officePage Executed
+
+
+is in asp.net core it is accomplished with two individual methods that is useRouting() and useEndpoints() you would like to invoke them in the same order that is first useRouting()  and after that only useEndpoints().
+
+useRouting() :- it enables routing in your application and it selects the appropriate endpoint based on the incoming request it mainly considers the url path and also http method either get post or put or delete method but it only just selects the appropriate endpoint it doesn't execute that endpoint.
+
+useEndpoint() :- it will actually execute the appropriate endpoint that was selected by the use routing.
+
+Map(),MapGet(),MapPost()
+------------------------
+
+Now we are going to create endpoints by using the map methods.either you can create with map(), or MapGet() or with MapPost().
+that means all those methods begin with the word map.
+we are trying to map between a specific url and one middleware so whenever the url matches the corresponding endpoint should be executed.
+
+Map() :- It will work for all HTTP methods ie, GET,POST,PUT,PATCH
+but suppose your requirement is that you would like to execute your endpoint only for get request for this url but not for any other type of http method like post put etc then we have the corresponding method  that is MapGet() similarly for post you have a mapPost().
+
+We get 405- Method not allowed when we do post request in mapGet() or  vice versa.
+
+GetEndPoint()
+-------------
+for example if the user makes a get request with the url map1 the corresponding first endpoint will be picked up and it stores that information of the endpoint in the form of an end point object and you can get that endpoint object programmatically by using this getEndPoint() .
+
+you can get the endpoint object only after use routing executes because before calling the useRouting() the appropriate endpoint was not recognized by asp.net core so that is the reason if you call get endpoint method before use routing it returns null you can get the appropriate endpoint after calling the use routing. then in that case it returns the corresponding endpoint object and it contains two important properties that is display name and request delegate.
+
+probably the display name will be same as your url
+and request delegate will be the actual endpoint that should be executed.
+
+
+
+
+
+
+
+
+
+
+ 
