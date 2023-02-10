@@ -198,6 +198,23 @@ Eg 1: {age:regex(^[0-9]{2}$)} matches with any two-digit number, such as 10, 11,
 Eg 2: {age:regex(^\d{3}-\d{3}$)} matches with any three-digit number, then hyphen, and then three-digit number, such as 123-456
 
 
+Custom Route Constraint class
+------------------------------
+
+suppose this particular regular expression constraint has to be applied in more than one place in your entire application so instead of manually repeating the same regular expression in everywhere you can also convert the same as a custom constraint means you will create a class only for the constraint.
+
+the custom constraint works equivalent to a normal constraint but instead of a simple constraint it would be a class that means upon receiving the request while verifying the route it will check that custom constraint means it executes the custom constraint class it checks whether the incoming request value matches with this custom constraint or not by executing a method called match() so if it matches it executes the endpoint 
+the custom constraint works equivalent to a normal constraint but instead of a simple constraint it would be a class that means upon receiving the request while verifying the route it will check that custom constraint means it executes the custom constraint class it checks whether the incoming request value matches with this custom constraint or not by executing a method called match so if it matches it executes the endpoint otherwise it will go to the next row to  check the incoming request.
+ 
+
+it implements an interface called IRouteConstraint so that this interface rules that you have to define a method called match so this particular match method will be executed in order to verify whether the incoming request matches with this constraint or not.
+
+
+now we have successfully created a constraint but we have to apply the same to the actual route before then that we have to add this class as a constraint class in the builder so switch back to the program.cs file before calling this build method just like you have added a service we have to add that constraint to the builder then only the builder can recognize the constraint because it's a custom constraint, we have to register it. 
+ 
+ 
+imagine in a real-world projects in case if you can create this constraint and give to other co-developers so any other core developers who is 
+working in the same project can make reuse of the same class instead of recreating the regular expression on their own while creating the end point here they can simply write months so that automatically means we are going to check all this code so if you would like to use it only one time in the entire project .there is no specific benefit of creating the custom constraint but for repeated usage for reusability it's a good idea to create custom constraint but in general it is rare to use the custom constraints because in general validation of the parameters is better idea than creating the constraints.
 
 
 
