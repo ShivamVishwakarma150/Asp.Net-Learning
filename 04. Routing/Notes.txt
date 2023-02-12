@@ -216,6 +216,19 @@ now we have successfully created a constraint but we have to apply the same to t
 imagine in a real-world projects in case if you can create this constraint and give to other co-developers so any other core developers who is 
 working in the same project can make reuse of the same class instead of recreating the regular expression on their own while creating the end point here they can simply write months so that automatically means we are going to check all this code so if you would like to use it only one time in the entire project .there is no specific benefit of creating the custom constraint but for repeated usage for reusability it's a good idea to create custom constraint but in general it is rare to use the custom constraints because in general validation of the parameters is better idea than creating the constraints.
 
+WebRoot and UseStaticFiles
+---------------------------
+
+an asp.net core web application may contain static files or static content such as images text files pdf files and javascript files css files etc generally while working with views you require to use all these type of files but by default these files cannot be served by asp.net core you require to enable it by using UseStaticFiles() middleware which enables the asp.net core application to serve the static files if the url contains the file path for example we have send a request to sample.jpg and if that file exists in the application we have to serve it as response to the browser so that the browser can receive that file content and display the same in the page so in order to serve the static files such as images and text files etc you require to enable these UseStaticFiles() .
+
+by default asp.net core recommends you to place all the static files such as images and javascript files in the web root folder and the default name of the webroot folder is www wrote it is not a fixer name you can configure it means you can change it you can even enable multiple www root folders also.
+
+we have kept all the static content in this www root folder so any of the files and subdirectories of this www route should be directly accessible through browser requests actually in earlier versions of asp.net by default all the files that are present in the entire project are accessible through browser by mentioning the appropriate file path but over the time what happens is it offers less security  because some of the monsters sites can access the code files of your application it may contain sensitive code or sensitive information to avoid that asp.net core recommends you to create www root folder that can contain the static files so it offers better security because only the contents of this wwwroot is accessible through the browser but not any other files that are present in the main or root directory of your application .
+
+it is extremely rare cases to enable more than one folder as static files in general it is enough to use the www 
+root folder as a default preferred folder path for the static files just for knowledge we have learned how do you configure the web root path and additional folders as well it is in general ready to use in real world projects.
 
 
+ 
+ 
  
