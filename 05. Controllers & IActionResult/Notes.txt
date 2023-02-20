@@ -1,0 +1,138 @@
+in the existing application we have created one endpoint for each url and we are writing the corresponding code in the same middleware but think of real world projects can you follow this existing approach in the real world projects that means you will be having thousands of urls with corresponding large amount of code writing all the endpoints in the same file like this like we write in previous middleware tutorial, is it good practice of programming definitely no right because if the length of the code increases and everything is in the same file and there is no grouping of the urls it will be quite difficult to identify the issues or errors and debug them so what's the solution for this problem there should be a concept of grouping the middlewares based on the logical purpose and that is exactly the controllers.
+
+a controller is a class that contains a set of action methods in this case each action method acts as an endpoint which can be requested based on a specific url for example if you send request to url1 the action one will execute and in the same way url too so these actions are grouped up into a controller class that means there should be some logical connection between action 1 and action 2.
+
+action 1 -> represents registration process
+action 2 -> represents the sing-in process 
+
+
+so both of these are related to user account maintenance right so that is the logical connection between them.
+
+so by definition a controller is a collection of action methods you can call them as actions in shortcut and each action performs a specific operation based on the inputs that are supplied to it.
+
+In order  to make it work you require to do two things.
+you require to add this (HomeController) class as service class. 
+so that it can participate in dependency injection.
+
+and second one is you enable routing for method1().
+
+generally a service class means a reusable class a class which performs a specific functionality without having direct relationship with UI in asp.net core the controllers are also treated as services. generally in the larger projects we create services for business logic.
+
+// For adding one controller 
+builder.Services.AddTransient<HomeController>();
+
+but problem is that in real world we have multiple controllers so for each controllers we have to write it individually.
+
+we can use it.
+builder.Services.AddControllers(); // so asp.net core automatically detects  what are the controllers present in the application that means what are all the classes that are sufficient with the word controller and it will collect all of those controllers and adds all of them at a time by using this AddControllers() method.
+
+1st step -> builder.Services.AddControllers(); //adds all the controller classes as services
+
+2nd step -> Enable the routing 
+earlier -> we use app.UseRouting();
+                  app.UseEndPoint(endpoints=>{
+                    // i want to add one endpoint for one action method
+                    endpoint.Map("url1",ref_end_point);
+                    ...
+                    ...
+                  });
+// it is going to be huge to overcome this problem in asp.net core we have MapControllers() method it will detect all the controllers of your entire project and it will pick up all action methods and for all the action methods the routing will be added at a time by this single statement and that's all.
+
+so finally you can remember add controllers will add the controller classes as services and map controllers enables the routing for each action method and these are the statements that you require to write for enabling the controllers in your project.
+
+
+the next step is to define the route template for your action method yes this method has been registered as an action method but what is the url template for that you require to define and you have to do it just above the method.
+
+Eg: 
+[Route("home")] 
+[Route("/")]
+public string Index()
+{
+    return "Hello from Index";
+}
+
+
+Generally the controllers response is called as Action Result .
+
+
+
+Content Result 
+---------------
+
+the content result is a type of action result which can be returned from the action method the content result can represent almost any type of content let's say you would like to return a plain text or html text or xml data or json data or else pdf files or else almost all types of content can be represented by the content result while creating the object for this content result class you are required to specify two parts of the information that is the content and the content type the content is the actual response body that you would like to return as a part of the response let's say some message and the content type will be added in the response headers that is the mime type of the content for example if the response body is the plain text .
+
+
+JSON Result 
+------------
+
+suppose I would like to return an object data in this format as key value pairs so this format is called as Json format that stands for JavaScript object notation the beauty of the Json format is it is identified and recognized by almost all modern programming languages including Java c-sharp python JavaScript PHP and almost all other programming languages that are being used today in asp.net core web applications you can return the Json data for sending the data back to the browser generally it is used in Ajax a synchronous JavaScript and XML that means you are going to make an asynchronous request through JavaScript code so that this Json data can be read by that JavaScript code.
+
+
+File Results
+------------
+did you notice sometimes when you open some webpages it gives you a file as download maybe for example you are trying to download a software from internet otherwise you are opening some course material as pdf file or you are downloading a movie so in all these cases there is a requirement of server gives the file to the browser so what if you would like to do the same in your own application let's say for example in your program when the browser sends a request to a particular url a file has to be sent as response to the browser not a message or something but the file has to be served as response to the browser then you will use this file result in that case the file content will be the response body and the type of the content of the file will be the content type for example text/plan text/html or application/pdf or the content type depending on the type of the file you have three types of file results virtual file result physical file result and file content result.
+
+
+VirtualFileResult
+.................
+
+return new VirtualFileResult("file relative path", "content type");
+
+//or
+
+return File("file relative path", "content type");
+
+Represents a file within the WebRoot ('wwwroot' by default) folder.
+
+Used when the file is present in the WebRoot folder.
+
+
+
+PhysicalFileResult
+...................
+
+Represents a file that is not necessarily part of the project folder.
+
+Used when the file is present outside the WebRoot folder.
+
+return new PhysicalFileResult("file absolute path", "content type");
+
+//or
+
+return PhysicalFile("file absolute path", "content type");
+
+FileContentResult
+..................
+
+Represents a file from the byte[ ].
+
+Used when a part of the file or byte[ ] from other data source has to be sent as response.
+
+return new FileContentResult(byte_array, "content type");
+
+//or
+
+return File(byte_array, "content type");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
